@@ -248,5 +248,9 @@ int main(int argc, char const *argv[])
 {
     
     V* vetor = cria_vetor();
+    insere_vetor(vetor,"teste");
+    printf("%d \n", vetor->n_ocupados);
+    imprime_palavra(vetor->vetores_pn[0].palavras->palavra);
+
     return 0;
 }
