@@ -112,11 +112,12 @@ typedef struct Palavra_No
 }PN;
 
 
-PN* cria_pn(int valor_hash){
+PN cria_pn(int valor_hash){
     
-    PN* pn =(PN*)malloc(sizeof(PN));
-    pn->palavras = cria_p();
-    pn->valor_hash = valor_hash;
+    PN pn;
+    pn.palavras = cria_p();
+    pn.valor_hash = valor_hash;
+    
     return pn;
 
 }
@@ -174,7 +175,7 @@ V* realoca_vetor(V* vetor){
 
 }
 
-V* verifica_vetor( V* vetor){
+V* verifica_vetor(V* vetor){
     if (vetor->n_ocupados == vetor->tamanho)
     {
         realoca_vetor(vetor);
@@ -219,8 +220,18 @@ void insere_vetor(V* vetor,char* palavra){
     int valor_hash = calcula_hash(palavra);
     int elemento = posicao_vetor_hash(vetor->vetores_pn,valor_hash,vetor->n_ocupados);
     
+    if (elemento == -1)
+    {
+        verifica_vetor(vetor);
+        vetor->vetores_pn[vetor->n_ocupados] = cria_pn(valor_hash);
+        insere_pn(&vetor->vetores_pn[vetor->n_ocupados],palavra);
+    
+    }else
+    {
+        insere_pn(&vetor->vetores_pn[elemento],palavra);   
+    }
 
-
+    vetor->n_ocupados++;
 }
 
 void imprime_vetor(V* vetor){
