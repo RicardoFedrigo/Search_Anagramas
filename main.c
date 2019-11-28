@@ -10,6 +10,32 @@
 #define N_RELOCACAO 10
 
 
+//--------------------------------FUNCOES TIPOS--------------------------------------------------
+
+typedef struct Palavras
+{
+    char* palavra;
+    struct Palavras* prox;
+
+}Palavras;
+
+typedef struct Palavra_No
+{
+    char* sorted_palavra;
+    Palavras* palavras;
+}PN;
+
+typedef struct Guarda_PN 
+{
+   PN *pn;
+   struct Guarda_PN *prox;
+}GPN;
+
+typedef struct Me_passa
+{
+    unsigned int valor_hash;
+    GPN* gpn;
+}MP;
 
 //--------------------------------FUNCOES HASH--------------------------------------------------
 
@@ -29,9 +55,7 @@ int calcula_hash(char* palavra){
     }
     
     return valor_hash % HASH;
-
 }
-
 //--------------------------------FUNCOES UTILITARIAS----------------------------------------------
 
 void imprime_palavra(char* p){
@@ -63,15 +87,23 @@ char* sort_palavras(char palavra[]){
     return palavra;
 }
 
+void sort_mp(MP mp[],int size){
 
+    MP aux;
+    for (int i = 0; i < size; i++){
+        for (int j = 1; j < size; j++)
+        {
+            if (mp[i].valor_hash > mp[j].valor_hash)
+            {
+                aux = mp[i];
+                mp[i] = mp[j];
+                mp[j] = aux;
+            }
+        }
+    }
+}
 //--------------------------------FUNCOES PALAVRA--------------------------------------------------
 
-typedef struct Palavras
-{
-    char* palavra;
-    struct Palavras* prox;
-
-}Palavras;
 
 Palavras* cria_p(){
     Palavras* palavra =(Palavras*)malloc(sizeof(Palavras));
@@ -105,11 +137,7 @@ void insere_palavra(Palavras* p,char* palavra){
 }
 
 //--------------------------------FUNCOES "NO DE PALAVRA"--------------------------------------------------
-typedef struct Palavra_No
-{
-    char* sorted_palavra;
-    Palavras* palavras;
-}PN;
+
 
 PN* cria_pn(){
     
@@ -147,11 +175,7 @@ void imprime_pn(PN* pn){
     }
 }
 //--------------------------------GUARDA PN--------------------------------------------------
-typedef struct Guarda_PN 
-{
-   PN *pn;
-   struct Guarda_PN *prox;
-}GPN;
+
 
 void insere_gpn(GPN *gpn,PN *pn)
 {
@@ -192,11 +216,7 @@ PN* procura_anagrama(GPN* gpn,char* palavra)
 }
 
 //--------------------------------FUNCOES ADM PALAVRAS IGUAIS--------------------------------------------------
-typedef struct Me_passa
-{
-    unsigned int valor_hash;
-    GPN* gpn;
-}MP;
+
 
 MP* cria_mp(int valor)
 {
@@ -217,7 +237,6 @@ void imprime_mp(MP *mp){
     printf("VALOR HASH: %d \n",mp->valor_hash);
     imprime_gpn(mp->gpn);
 }
-
 //_____________________________________________________________________________________
 
 int main(int argc, char const *argv[])
@@ -238,7 +257,6 @@ int main(int argc, char const *argv[])
     insere_pn(novo3,"cegonha");
     insere_pn(novo3,"vergonha");
     insere_gpn(gpn,novo3);
-
 
     MP* mp = cria_mp(10);
     insere_mp(mp,novo1);
