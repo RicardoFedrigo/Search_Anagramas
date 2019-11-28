@@ -107,135 +107,145 @@ void insere_palavra(Palavras* p,char* palavra){
 //--------------------------------FUNCOES "NO DE PALAVRA"--------------------------------------------------
 typedef struct Palavra_No
 {
-    int valor_hash;
+    char* sorted_palavra;
     Palavras* palavras;
 }PN;
 
-
-PN* cria_pn(int valor_hash){
+PN* cria_pn(){
     
     PN* pn =(PN*)malloc(sizeof(PN));
+    pn->sorted_palavra = 0;
     pn->palavras = cria_p();
-    pn->valor_hash = valor_hash;
+    
     return pn;
 
 }
 
-void insere_pn(PN* pn, char* palavra){
+PN* insere_pn(PN* pn, char* palavra){
     
-    if(pn->palavras->palavra == ""){
+    if(pn->sorted_palavra == 0){
         
         char* new = (char*)malloc((strlen(palavra)+1)*(sizeof(char)));
         strcpy(new,palavra);
-        pn->palavras->palavra = sort_palavras(new); 
+        pn->sorted_palavra = sort_palavras(new); 
     }
     
     insere_palavra((pn->palavras), palavra);
-    
+    return pn;    
 }
-
 
 void imprime_pn(PN* pn){
 
-    Palavras* p = pn->palavras;
+    Palavras* p = pn->palavras->prox;
     
+    printf("Palanvra do NO orgainzada: ");
+    imprime_palavra(pn->sorted_palavra);
     while (p)
-    {
+    {   
         imprime_palavra(p->palavra);
         p = p->prox;
     }
-    
-
-}   
-//--------------------------------FUNCOES ESTRUTURA VETOR  VETOR--------------------------------------------------
-
-typedef struct Vetor{
-    unsigned int tamanho;
-    unsigned int n_ocupados;
-    PN vetores_pn[];
-}V;
-
-V* sort_vetor(V* vetor){
-
 }
-V* realoca_vetor(V* vetor){
+//--------------------------------GUARDA PN--------------------------------------------------
+typedef struct Guarda_PN 
+{
+   PN *pn;
+   struct Guarda_PN *prox;
+}GPN;
 
-    int novo_tamanho = vetor->tamanho + N_RELOCACAO;
-    V* novo_vetor =(V*) malloc(sizeof(V));
-    
-    novo_vetor->tamanho = (novo_tamanho);
-    novo_vetor->n_ocupados = vetor->n_ocupados;
-    novo_vetor->vetores_pn[novo_tamanho];
-    
-    memcmp(&novo_vetor->vetores_pn,&vetor->vetores_pn,vetor->tamanho);
-    free(vetor);
-    
-    return novo_vetor;
-
+void insere_gpn(GPN *gpn,PN *pn)
+{
+    GPN* new =(GPN*)malloc(sizeof(GPN));
+    GPN* aux = gpn;
+    new->pn = pn;
+    new->prox = gpn->prox;
+    gpn->prox = new;
 }
 
-V* verifica_vetor( V* vetor){
-    if (vetor->n_ocupados == vetor->tamanho)
+void imprime_gpn(GPN* gpn)
+{
+    GPN* aux = gpn->prox;
+
+    while (aux)
     {
-        realoca_vetor(vetor);
+        imprime_pn(aux->pn);
+        aux = aux->prox;
+    }
+    
+}
 
+PN* procura_anagrama(GPN* gpn,char* palavra)
+{   
+    GPN* aux = gpn->prox;
+    char* new = (char*)malloc((strlen(palavra)+1)*(sizeof(char)));
+    strcpy(new,palavra);
+    sort_palavras(new);
+    while (aux)
+    {
+        if (strcmp(aux->pn->sorted_palavra,new) == 0)
+        {   
+            return aux->pn;
+        }
+        aux = aux->prox;
     }
     return 0;
 }
 
-V* cria_vetor(){
+//--------------------------------FUNCOES ADM PALAVRAS IGUAIS--------------------------------------------------
+typedef struct Me_passa
+{
+    unsigned int valor_hash;
+    GPN* gpn;
+}MP;
 
-    V* vetor =(V*)malloc(sizeof(V));
+MP* cria_mp(int valor)
+{
+    MP* mp =(MP*)malloc(sizeof(MP));
+    GPN* gpn = (GPN*)malloc(sizeof(GPN));
 
-    vetor->tamanho = N_RELOCACAO;
-    vetor->n_ocupados = 0;
-    vetor->vetores_pn[N_RELOCACAO];
-
-    return vetor;
+    mp->gpn = gpn;
+    mp->valor_hash = valor;
+    return mp;
 }
 
-int posicao_vetor_hash(PN vetor[], int hash, int tamanho){
-    
-    int inf = 0;     
-    int sup = tamanho-1;
-    int meio;
-    
-    while (inf <= sup)
-    {
-         meio = (inf + sup)/2;
-         if (hash == vetor[meio].valor_hash)
-              return meio;
-         if (hash < vetor[meio].valor_hash)
-              sup = meio-1;
-         else
-              inf = meio+1;
-    }
-    return -1; 
-
+void insere_mp(MP* mp,PN* pn)
+{
+    insere_gpn(mp->gpn,pn);
 }
 
-void insere_vetor(V* vetor,char* palavra){
-    
-    int valor_hash = calcula_hash(palavra);
-    int elemento = posicao_vetor_hash(vetor->vetores_pn,valor_hash,vetor->n_ocupados);
-    
-
-
+void imprime_mp(MP *mp){
+    printf("VALOR HASH: %d \n",mp->valor_hash);
+    imprime_gpn(mp->gpn);
 }
 
-void imprime_vetor(V* vetor){
-
-    for (int i = 0; i < vetor->n_ocupados; i++)
-    {
-        imprime_pn(&vetor->vetores_pn[i]);
-    }
-}
-
-// _____________________________________________________________________________________________
+//_____________________________________________________________________________________
 
 int main(int argc, char const *argv[])
 {
-    
-    V* vetor = cria_vetor();
+    GPN* gpn = (GPN*)malloc(sizeof(GPN));
+    PN* novo1 = cria_pn();
+    insere_pn(novo1,"roma");
+    insere_pn(novo1,"amor");
+    insere_gpn(gpn,novo1);
+
+    PN* novo2 = cria_pn();
+    insere_pn(novo2,"teste");
+    insere_pn(novo2,"estte");
+    insere_gpn(gpn,novo2);
+
+    PN* novo3 = cria_pn();
+    insere_pn(novo3,"aranha");
+    insere_pn(novo3,"cegonha");
+    insere_pn(novo3,"vergonha");
+    insere_gpn(gpn,novo3);
+
+
+    MP* mp = cria_mp(10);
+    insere_mp(mp,novo1);
+    insere_mp(mp,novo2);
+    insere_mp(mp,novo3);
+
+    imprime_mp(mp);
+
     return 0;
 }
