@@ -18,8 +18,9 @@ MP** carrega_arquivo(){
         result = fgets(Linha, 100, arq);
         if (result)
         {   
+            trim(result);
             printf("Adicionando %d : %s",i,result);
-            printf("Peso: %d \t",calcula_hash(result));      
+            printf("Peso: %d \n",calcula_hash(result));      
     	    insere_rn(mp,Linha);
             i++;
         }
@@ -30,11 +31,8 @@ MP** carrega_arquivo(){
 int main(int argc, char const *argv[])
 {
     MP** mp = carrega_arquivo();  
-    procura_anagramas_palavra(mp,"roma");
-    imprime_gpn(mp[5452]->gpn);
-//     imprime_rn(mp);
-//     PN* pn = procura_anagramas_palavra(mp,"roma");
-//     imprime_pn(pn);
+    procura_anagramas_palavra(mp,"amor");
+
   
     return 0;
 }
