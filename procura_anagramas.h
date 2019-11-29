@@ -51,13 +51,12 @@ int converte_letras(char c){
 int calcula_hash(char* palavra){
 
     int valor_hash = 0;
-
+   
     for (int i = 0; palavra[i] != '\0'; i++)
     {
         valor_hash += converte_letras(palavra[i]);
     }
-    
-    return valor_hash % HASH;
+    return (valor_hash % HASH);
 }
 //--------------------------------FUNCOES UTILITARIAS----------------------------------------------
 

@@ -1,23 +1,37 @@
 #include "procura_anagramas.h"
 
+MP** carrega_arquivo(){
+    MP** mp = cria_rn();
+    FILE *arq;
+    char Linha[100];
+    char *result;
+    int i =1;
+
+    arq = fopen("list_anagramas.txt", "rt");
+    if (arq == NULL)  
+    {
+       printf("Problemas na abertura do arquivo\n");
+       return 0;
+    }
+    while (!feof(arq))
+    {
+        result = fgets(Linha, 100, arq);
+        if (result)
+        {   
+             printf("Linha %d : %s",i,Linha);      
+    	    insere_rn(mp,Linha);
+            i++;
+        }
+    }
+    return mp;
+}
 int main(int argc, char const *argv[])
 {
-    MP** mp = cria_rn();
-    insere_rn(mp,"TETES");
-    insere_rn(mp,"amor");
-    insere_rn(mp,"roma");
-    insere_rn(mp,"mora");
-    insere_rn(mp,"coisa");
-    
+    MP** mp = carrega_arquivo();  
     procura_anagramas_palavra(mp,"roma");
-
-    imprime_rn(mp);
-    printf("\n");
-    printf("\n");
-    printf("\n");
-
-    PN* pn = procura_anagramas_palavra(mp,"roma");
-    imprime_pn(pn);
-
+//     imprime_rn(mp);
+//     PN* pn = procura_anagramas_palavra(mp,"roma");
+//     imprime_pn(pn);
+  
     return 0;
 }
