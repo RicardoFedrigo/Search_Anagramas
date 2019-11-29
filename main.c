@@ -5,12 +5,12 @@
 
 //Definiçoes 
 
-#define MAIOR_PALAVRA_PT 29
-#define HASH 29;
+#define MAIOR_PALAVRA_PT 
+#define HASH 29
 #define N_RELOCACAO 10
 
 
-//--------------------------------FUNCOES TIPOS--------------------------------------------------
+//----------------------------------------TIPOS--------------------------------------------------
 
 typedef struct Palavras
 {
@@ -66,8 +66,6 @@ void imprime_palavra(char* p){
     }
     printf("\n");
 }   
-
-
 char* sort_palavras(char palavra[]){
     
     int len = strlen(palavra);
@@ -101,6 +99,15 @@ void sort_mp(MP mp[],int size){
             }
         }
     }
+}
+
+char* retorna_palavra_arrumada(char* palavra)
+{
+    char* new = (char*)malloc((strlen(palavra)+1)*(sizeof(char)));
+    strcpy(new,palavra);
+    sort_palavras(new);
+
+    return new;
 }
 //--------------------------------FUNCOES PALAVRA--------------------------------------------------
 
@@ -152,10 +159,8 @@ PN* cria_pn(){
 PN* insere_pn(PN* pn, char* palavra){
     
     if(pn->sorted_palavra == 0){
-        
-        char* new = (char*)malloc((strlen(palavra)+1)*(sizeof(char)));
-        strcpy(new,palavra);
-        pn->sorted_palavra = sort_palavras(new); 
+                
+        pn->sorted_palavra = retorna_palavra_arrumada(palavra); 
     }
     
     insere_palavra((pn->palavras), palavra);
@@ -190,41 +195,48 @@ void imprime_gpn(GPN* gpn)
 {
     GPN* aux = gpn->prox;
 
-    while (aux)
+    if (aux)
     {
-        imprime_pn(aux->pn);
-        aux = aux->prox;
+        while (aux)
+        {
+            imprime_pn(aux->pn);
+            aux = aux->prox;
+        }
+    
+    }else{
+        printf("NÃO A PALAVRAS NESSA POSIÇÃO \n");
+        printf("\n");
     }
+    
     
 }
 
 PN* procura_anagrama(GPN* gpn,char* palavra)
 {   
     GPN* aux = gpn->prox;
-    char* new = (char*)malloc((strlen(palavra)+1)*(sizeof(char)));
-    strcpy(new,palavra);
-    sort_palavras(new);
+    char* new = retorna_palavra_arrumada(palavra);
     while (aux)
     {
-        if (strcmp(aux->pn->sorted_palavra,new) == 0)
+        if (!strcmp(aux->pn->sorted_palavra,new))
         {   
             return aux->pn;
         }
         aux = aux->prox;
     }
+
+    free(new);
     return 0;
 }
 
 //--------------------------------FUNCOES ADM PALAVRAS IGUAIS--------------------------------------------------
-
-
 MP* cria_mp(int valor)
 {
     MP* mp =(MP*)malloc(sizeof(MP));
     GPN* gpn = (GPN*)malloc(sizeof(GPN));
-
+    
     mp->gpn = gpn;
     mp->valor_hash = valor;
+    
     return mp;
 }
 
@@ -237,33 +249,100 @@ void imprime_mp(MP *mp){
     printf("VALOR HASH: %d \n",mp->valor_hash);
     imprime_gpn(mp->gpn);
 }
+
+
+//--------------------------------REGRAS DE NEGOCIO------------------------------------
+
+MP** cria_rn(){
+
+    MP** mp =(MP** )malloc(HASH*sizeof(MP*));
+    for (int i = 0; i < HASH; i++)
+    {
+        mp[i] = cria_mp(i);
+    }
+
+    return mp;
+}
+
+int compara_rn(GPN* gpn, char* palavra)
+{
+    PN* se_existir = procura_anagrama(gpn,palavra);
+
+    if (se_existir)
+    {
+        char* new = retorna_palavra_arrumada(palavra);
+        char* ponteiro_mp_hash = gpn->prox->pn->sorted_palavra;
+        if (!strcmp(ponteiro_mp_hash,new))
+        {
+            return 1;
+        }
+    }
+    return 0;
+
+}
+
+void insere_rn(MP** mp,char* palavra)
+{
+    unsigned int valor_hash = calcula_hash(palavra);
+    if (mp[valor_hash]->valor_hash == valor_hash)
+    {
+        if (compara_rn(mp[valor_hash]->gpn,palavra))
+        {
+            insere_pn(mp[valor_hash]->gpn->prox->pn,palavra);
+        }else
+        {
+            PN* pn = cria_pn();
+            insere_pn(pn,palavra);
+            insere_mp(mp[valor_hash],pn);
+        }
+    }
+}
+
+
+PN* procura_anagramas_palavra(MP** mp, char* palavra)
+{
+    unsigned int valor_hash = calcula_hash(palavra);
+    PN* pn = procura_anagrama(mp[valor_hash]->gpn,palavra);
+    if (pn)
+    {
+        printf("Palavra procurada: ");
+        imprime_palavra(palavra);
+        return pn;
+    }
+    
+    printf("Palavra procurada não existe ");    
+    return 0;
+}
+
+void imprime_rn(MP** mp)
+{
+    for (int i = 0; i < HASH; i++)
+    {
+        printf("Vetor na posicao [%d] :\n", i );
+        imprime_mp(mp[i]);
+    }
+    
+}
 //_____________________________________________________________________________________
 
 int main(int argc, char const *argv[])
 {
-    GPN* gpn = (GPN*)malloc(sizeof(GPN));
-    PN* novo1 = cria_pn();
-    insere_pn(novo1,"roma");
-    insere_pn(novo1,"amor");
-    insere_gpn(gpn,novo1);
+    MP** mp = cria_rn();
+    insere_rn(mp,"TETES");
+    insere_rn(mp,"amor");
+    insere_rn(mp,"roma");
+    insere_rn(mp,"mora");
+    insere_rn(mp,"coisa");
+    
+    procura_anagramas_palavra(mp,"roma");
 
-    PN* novo2 = cria_pn();
-    insere_pn(novo2,"teste");
-    insere_pn(novo2,"estte");
-    insere_gpn(gpn,novo2);
+    imprime_rn(mp);
+    printf("\n");
+    printf("\n");
+    printf("\n");
 
-    PN* novo3 = cria_pn();
-    insere_pn(novo3,"aranha");
-    insere_pn(novo3,"cegonha");
-    insere_pn(novo3,"vergonha");
-    insere_gpn(gpn,novo3);
-
-    MP* mp = cria_mp(10);
-    insere_mp(mp,novo1);
-    insere_mp(mp,novo2);
-    insere_mp(mp,novo3);
-
-    imprime_mp(mp);
+    PN* pn = procura_anagramas_palavra(mp,"roma");
+    imprime_pn(pn);
 
     return 0;
 }
