@@ -111,17 +111,14 @@ char *trim(char *str)
 {
     size_t len = 0;
     char *frontp = str;
-    char *endp = NULL;
+    char *endp = 0;
 
-    if( str == NULL ) { return NULL; }
+    if( str == 0 ) { return 0; }
     if( str[0] == '\0' ) { return str; }
 
     len = strlen(str);
     endp = str + len;
 
-    /* Move the front and back pointers to address the first non-whitespace
-     * characters from each end.
-     */
     while( isspace((unsigned char) *frontp) ) { ++frontp; }
     if( endp != frontp )
     {
@@ -133,10 +130,6 @@ char *trim(char *str)
     else if( str + len - 1 != endp )
             *(endp + 1) = '\0';
 
-    /* Shift the string so that it starts at str so that if it's dynamically
-     * allocated, we can still free it on the returned pointer.  Note the reuse
-     * of endp to mean the front of the string buffer now.
-     */
     endp = str;
     if( frontp != str )
     {
@@ -204,7 +197,7 @@ PN* cria_pn(){
 
 PN* insere_pn(PN* pn, char* palavra){
     
-    if(pn->sorted_palavra == 0){
+    if(!pn->sorted_palavra){
                 
         pn->sorted_palavra = retorna_palavra_arrumada(palavra); 
     }
@@ -231,7 +224,10 @@ void imprime_pn(PN* pn){
 void insere_gpn(GPN *gpn,PN *pn)
 {
     GPN* new =(GPN*)malloc(sizeof(GPN));
-    GPN* aux = gpn;
+    while (gpn->prox)
+    {
+        gpn = gpn->prox;
+    }    
     new->pn = pn;
     new->prox = gpn->prox;
     gpn->prox = new;
@@ -335,7 +331,9 @@ void insere_rn(MP** mp,char* palavra)
     {
         if (compara_rn(mp[valor_hash]->gpn,palavra))
         {   
-            insere_pn(mp[valor_hash]->gpn->prox->pn,palavra);
+            PN* existente_pn = procura_anagrama(mp[valor_hash]->gpn,palavra);
+            insere_pn(existente_pn,palavra);
+        
         }else
         {
             PN* pn = cria_pn();

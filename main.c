@@ -20,7 +20,7 @@ MP** carrega_arquivo(){
         {   
             trim(result);
             printf("Adicionando %d : %s",i,result);
-            printf("Peso: %d \n",calcula_hash(result));      
+            printf(" Peso: %d \n",calcula_hash(result));      
     	    insere_rn(mp,Linha);
             i++;
         }
@@ -31,8 +31,7 @@ MP** carrega_arquivo(){
 int main(int argc, char const *argv[])
 {
     MP** mp = carrega_arquivo();  
-    procura_anagramas_palavra(mp,"amor");
-
+    PN* pn = procura_anagramas_palavra(mp,"ramo");
   
     return 0;
 }
