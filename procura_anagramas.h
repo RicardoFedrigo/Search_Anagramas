@@ -10,8 +10,8 @@
 
 #define MAIOR_PALAVRA_PT 
 //#define HASH 130
+#define HASH 999983
 
-#define HASH 8231
 #define N_RELOCACAO 10
 
 
@@ -318,6 +318,7 @@ int compara_rn(GPN* gpn, char* palavra)
         {
             return 1;
         }
+        free(new);
     }
     return 0;
 
