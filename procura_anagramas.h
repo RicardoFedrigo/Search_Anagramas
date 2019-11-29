@@ -9,7 +9,9 @@
 //Definiçoes 
 
 #define MAIOR_PALAVRA_PT 
-#define HASH 29
+//#define HASH 130
+
+#define HASH 8231
 #define N_RELOCACAO 10
 
 
@@ -43,18 +45,20 @@ typedef struct Me_passa
 //--------------------------------FUNCOES HASH--------------------------------------------------
 
 int converte_letras(char c){
-    int valor_numero = 0;
+    unsigned int valor_numero = 0;
     valor_numero = (int)c;
-    return valor_numero;
+    valor_numero*=valor_numero;
+    return (valor_numero);
 }
 
 int calcula_hash(char* palavra){
 
-    int valor_hash = 0;
+    unsigned int valor_hash = 0;
    
     for (int i = 0; palavra[i] != '\0'; i++)
     {
         valor_hash += converte_letras(palavra[i]);
+
     }
     return (valor_hash % HASH);
 }
@@ -286,10 +290,11 @@ int compara_rn(GPN* gpn, char* palavra)
 void insere_rn(MP** mp,char* palavra)
 {
     unsigned int valor_hash = calcula_hash(palavra);
+    
     if (mp[valor_hash]->valor_hash == valor_hash)
     {
         if (compara_rn(mp[valor_hash]->gpn,palavra))
-        {
+        {   
             insere_pn(mp[valor_hash]->gpn->prox->pn,palavra);
         }else
         {
