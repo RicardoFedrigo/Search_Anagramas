@@ -28,18 +28,13 @@ MP** carrega_arquivo(){
     printf("\n");
     return mp;
 }
-int main(int argc, char const **argv[])
+int main(int argc, char const **argv)
 {
     MP** mp = carrega_arquivo();  
     for (int i = 1; i < argc; i++)
     {
-        char* new = (char*)malloc((strlen(argv[i])+1)*(sizeof(char)));
-        strcpy(new,argv[i]);
         PN* pn = procura_anagramas_palavra(mp,argv[i]);
-        free(new);
-    }
-    
-    
-   
+        
+    } 
     return 0;
 }
