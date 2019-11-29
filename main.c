@@ -1,7 +1,5 @@
 #include "procura_anagramas.h"
 
-//_____________________________________________________________________________________
-
 int main(int argc, char const *argv[])
 {
     MP** mp = cria_rn();
