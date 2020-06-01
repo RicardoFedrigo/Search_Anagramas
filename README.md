@@ -3,12 +3,12 @@
 Descrição
 =======================================
   Programa feito na linguagem de programação C, para aula de Estrutura de Dados 2.
-Este programa recebe um palavra da língua portuguesa(Brasil), e devolvelve seus anagramas.
+Este programa recebe um palavra da língua portuguesa(Brasil), e devolve seus anagramas.
 Anagramas: Um anagrama é uma espécie de jogo de palavras, resultando do rearranjo das letras de uma palavra ou expressão para produzir outras palavras ou expressões, utilizando todas as letras originais exatamente uma vez.
 
 Informações Sobre a e estrutura
 =======================================
-  O programa basicamente é feito com varias listas encadeada, sua conplexidade com uma HASH de valor primo e grande, é quase consatante porem, com valor HASH pequeno seu comportamento vira linear.
+  O programa basicamente é feito com listas encadeada,a complexidade do algoritmo é quase consatante, porém se colocar um valor HASH pequeno seu comportamento vira linear.
 
 Modo de Uso
 =======================================
