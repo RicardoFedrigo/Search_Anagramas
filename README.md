@@ -6,10 +6,6 @@ Descrição
 Este programa recebe um palavra da língua portuguesa(Brasil), e devolve seus anagramas.
 Anagramas: Um anagrama é uma espécie de jogo de palavras, resultando do rearranjo das letras de uma palavra ou expressão para produzir outras palavras ou expressões, utilizando todas as letras originais exatamente uma vez.
 
-Informações Sobre a e estrutura
-=======================================
-  O programa basicamente é feito com listas encadeada,a complexidade do algoritmo é quase consatante, porém se colocar um valor HASH pequeno seu comportamento vira linear.
-
 Modo de Uso
 =======================================
 *Primeiro compile a função main do codigo utilizando gcc main.c -o main
